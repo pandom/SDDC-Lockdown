@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="SDDC-Lockdown : Segmenting VMware&#39;s SDDC">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>SDDC-Lockdown</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/pandom/SDDC-Lockdown">View on GitHub</a>
+
+          <h1 id="project_title">SDDC-Lockdown</h1>
+          <h2 id="project_tagline">Segmenting VMware&#39;s SDDC</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/pandom/SDDC-Lockdown/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/pandom/SDDC-Lockdown/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>
+<a id="welcome-to-the-sddc-lockdown-tool" class="anchor" href="#welcome-to-the-sddc-lockdown-tool" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Welcome to the SDDC Lockdown tool</h2>
+
+<p>The SDDC lockdown tool. This tool is designed to segment the VMware SDDC framework out of the box. The tool will build a provider/consumer firewall framework for given applications in the SDDC stack. Each release will add more programs to this stack. The initial release is targeting:</p>
+
+<ul>
+<li>vSphere</li>
+<li>vCenter Service Appliance</li>
+<li>NSX for vSphere</li>
+<li>Log Insight 3.0 cluster</li>
+</ul>
+
+<p>This tool will build the required Security Groups, Services, Service Groups, Security Tags, IPsets, Firewall sections, and Firewall rules. It is then up to the administrator to tag/mark/add workloads or IP addresses to IP sets to begin enforcing the lockdown.</p>
+
+<h3>
+<a id="provider-and-consumer" class="anchor" href="#provider-and-consumer" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Provider and Consumer</h3>
+
+<p>This SDDC Lockdown tool starts to build out on true provider and consumer security models. The Provider assumes the mantle of delivering said service. A service consumer will do just that - consume. The Firewall rules are applied here between provider and consumers.</p>
+
+<p>Application groups are appended as children to consumer groups. This allows their contents access to a service.</p>
+
+<p>This method allows the correct services to be exposed to consumers of a service. This ensures that when a new application is spun up or torn down that all rules relevant to it are removed and destroyed. The impact then is only the application. This does away with detangled stale firewall rules.</p>
+
+<h3>
+<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+
+<p>I am the author of this module. Check our the <a href="https://github.com/pandom/SDDC-Lockdown/issues">Issues</a> page to see what is planned and what is coming soon.</p>
+
+<h3>
+<a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Support or Contact</h3>
+
+<p>Please reach out to me here, on twitter as @pandom_ or aburkevmwarecom .</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">SDDC-Lockdown maintained by <a href="https://github.com/pandom">pandom</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
