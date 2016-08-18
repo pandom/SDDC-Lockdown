@@ -68,9 +68,9 @@ param (
       $vSphereSecurityGroupApplicationName = "SG-vSphere-Hosts",
       $WindowsCorporateSecurityGroupName = "SG-Windows-Corporate",
       $LinuxCorporateSecurityGroupName = "SG-Linux-Corporate",
-    #Management
-      $SDDCSDDCManagementInternalSecurityGroupApplicationName = "SG-SDDC-Management-Internal",
-    #Management
+    #Management - internal
+      $SDDCManagementInternalSecurityGroupApplicationName = "SG-SDDC-Management-Internal",
+    #Management - external
       $ManagementVPNSecurityGroupApplicationName = "SG-SDDC-Management-VPN",
     #Internal Web
       $InternalWebSecurityGroupProviderName = "SG-Provider-Internal-Web",
@@ -94,9 +94,9 @@ param (
       $SMTPSecurityTagName = "ST-SMTP-Servers",
       $LinuxCorporateSecurityTagName = "ST-Linux-Corporate",
       $WindowsCorporateSecurityTagName = "ST-Windows-Corporate",
-      $ManagementSecurityTagName = "ST-WebManagement",
+      $SDDCManagementSecurityTagName = "ST-SDDC-Management-Internal",
       $DHCPSecurityTagName = "ST-DHCP-Servers",
-      $ManagementInternalSecurityTagName = "ST-Management-Internal",
+      $ManagementInternalSecurityTagName = "ST-SDDC-Management-Internal",
 
 
 
@@ -117,7 +117,12 @@ param (
       $NtpFirewallSectionName = "NTP Services",
       $SmtpFirewallSectionName = "SMTP Services",
       $vCenterFirewallSectionName = "vCenter Services",
-
+      $RDPFirewallSectionName = "Management - RDP Services",
+      $SSHFirewalLSectionName = "Management - SSH Services",
+      $WebFirewallSectionName = "Management - Web Services",
+      $SDDCInternalManagementFirewallSectionName = "SDDC Internal Management",
+      $SDDCVPNManagementFirewallSectionName = "SDDC VPN Management",
+      $SDDCExternalManagementFirewallSectionName = "SDDC External Management",
 
     ##################
     # Firewall Rule Tags
@@ -150,6 +155,7 @@ param (
         $ssh = "22",
         $dhcpserver = "67",
         $dhcpclient = "68",
+        $rdp = "3389",
       ##ad services
         $kerberos = "88",
         $ADGlobalCatalogSecure = "3269",
@@ -234,9 +240,14 @@ param (
   $tcp22 = Get-NsxService "$t-$Ssh"
      if (!$tcp22)
     {
-      $tcp22 = (New-NsxService -name "$t-$Ssh" -protocol $t -port $Ssh -description "Syslog over TCP")
+      $tcp22 = (New-NsxService -name "$t-$Ssh" -protocol $t -port $Ssh -description "SSH protocol")
     }
-
+  ##SSH
+  $tcp3389 = Get-NsxService "$t-$rdp"
+     if (!$tcp3389)
+    {
+      $tcp3389 = (New-NsxService -name "$t-$rdp" -protocol $t -port $rdp -description "Remote Desktop Protocol")
+    }
 
   #dns
   $tcp53 = Get-NsxService "$t-$dns"
@@ -355,10 +366,8 @@ write-host -foregroundcolor green "Creating Service Groups"
     if (!$ManagementServiceGroup)
     {
       $ManagementServiceGroup = New-NsxServiceGroup $ManagementServiceGroupName -description "Web and SSH Management services"
-      $ManagementServiceGroup |  -member $tcp80,$tcp443
+      $ManagementServiceGroup | Add-NsxServiceGroupMember -member $tcp80,$tcp443
     }
-    # Add SSH to the group
-  $ManagementServiceGroup | Add-NsxServiceGroupMember -member $tcp22
 
 
 ## Active Directory
@@ -407,7 +416,7 @@ write-host -foregroundcolor green "Creating Security Tags"
   $AdSecurityTag = New-NsxSecurityTag -name "$AdSecurityTagName"
   $NTPSecurityTag = New-NsxSecurityTag -name "$NTPSecurityTagName"
   $SMTPSecurityTag = New-NsxSecurityTag -name "$SMTPSecurityTagName"
-  $ManagementSecurityTag = New-NsxSecurityTag -name "$ManagementSecurityTagName"
+  $SDDCManagementSecurityTag = New-NsxSecurityTag -name "$SDDCManagementSecurityTagName"
   $WindowsCorporateSecurityTag = New-NsxSecurityTag -name "$WindowsCorporateSecurityTagName"
   $LinuxCorporateSecurityTag = New-NsxSecurityTag -name "$LinuxCorporateSecurityTagName"
   $DHCPSecurityTag = New-NsxSecurityTag -name "$DHCPSecurityTagName"
@@ -439,7 +448,7 @@ write-host -foregroundcolor green "Creating  Application SGs"
   #DHCP
   $DHCPSecurityGroupApplication = New-NsxSecurityGroup -name "$DHCPSecurityGroupApplicationName" -description "DHCP Server Security Group" -includemember $DHCPSecurityTag
   #Management
-  $SDDCManagementInternalSecurityGroupApplication = New-NsxSecurityGroup -name "$SDDCSDDCManagementInternalSecurityGroupApplicationName" -description "Management Host Security Group" -includemember $ManagementSecurityTag
+  $SDDCManagementInternalSecurityGroupApplication = New-NsxSecurityGroup -name "$SDDCManagementInternalSecurityGroupApplicationName" -description "Management Host Security Group" -includemember $SDDCManagementSecurityTag
 
 write-host -foregroundcolor green "Creating OS SGs"
 
@@ -457,8 +466,9 @@ write-host -foregroundcolor green "Creating OS SGs"
   $SMTPSecurityGroupProvider = New-NsxSecurityGroup -name "$SMTPSecurityGroupProviderName" -description "SMTP Provider Security Group" -includemember $SMTPSecurityGroupApplication
   $SyslogSecurityGroupProvider = New-NsxSecurityGroup -name "$SyslogSecurityGroupProviderName" -description "Syslog Provider Security Group" -includemember $LogInsightSecurityGroupApplication
   $NTPSecurityGroupProvider = New-NsxSecurityGroup -name "$NTPSecurityGroupProviderName" -description "NTP Provider Security Group" -includemember $NTPSecurityGroupApplication
-  $ManagementInternalSecurityGroupProvider = New-NsxSecurityGroup -name "$ManagementInternalSecurityGroupProviderName" -description "Management Provider Security Group"
-
+  $InternalRdpSecurityGroupProvider = New-NsxSecurityGroup -name "$InternalRdpSecurityGroupProviderName" -description "RDP Internal Provider Security Group"
+  $InternalSSHSecurityGroupProvider = New-NsxSecurityGroup -name "$InternalSSHSecurityGroupProviderName" -description "SSH Internal Provider Security Group"
+  $InternalWebSecurityGroupProvider = New-NsxSecurityGroup -name "$InternalWebSecurityGroupProviderName" -description "Web Internal Provider Security Group"
 
 write-host -foregroundcolor green "Creating Consumer SGs"
 
@@ -469,7 +479,10 @@ write-host -foregroundcolor green "Creating Consumer SGs"
   $SMTPSecurityGroupConsumer = New-NsxSecurityGroup -name "$SMTPSecurityGroupConsumerName" -description "SMTP Consumer Security Group" -includemember $LogInsightSecurityGroupApplication
   $SyslogSecurityGroupConsumer = New-NsxSecurityGroup -name "$SyslogSecurityGroupConsumerName" -description "Syslog Consumer Security Group"
   $NTPSecurityGroupConsumer = New-NsxSecurityGroup -name "$NTPSecurityGroupConsumerName" -description "NTP Consumer Security Group" -includemember $LogInsightSecurityGroupApplication
-  $ManagementInternalSecurityGroupConsumer = New-NsxSecurityGroup -name "$ManagementInternalSecurityGroupConsumerName" -description "Management Consumer Security Group" -includemember $LogInsightSecurityGroupApplication,$SDDCManagementInternalSecurityGroupApplication
+  # SDDC INTERNAL MANAGEMENT STACK
+  $InternalRDPSecurityGroupConsumer = New-NsxSecurityGroup -name "$InternalRDPSecurityGroupConsumerName" -description "RDP Internal Consumer Security Group" -includemember $SDDCManagementInternalSecurityGroupApplication
+  $InternalSSHSecurityGroupConsumer = New-NsxSecurityGroup -name "$InternalSSHSecurityGroupConsumerName" -description "SSH Internal Consumer Security Group" -includemember $SDDCManagementInternalSecurityGroupApplication
+  $InternalWebSecurityGroupConsumer = New-NsxSecurityGroup -name "$InternalWebSecurityGroupConsumerName" -description "WEB Internal Consumer Security Group"
 
 write-host -foregroundcolor green "Creating Firewall Rules"
 
@@ -500,37 +513,43 @@ write-host -foregroundcolor green "Creating Firewall Rules"
     #NTP DFW Section
     New-NsxFirewallSection -name "$NtpFirewallSectionName" | out-null
     #Provider to Consumer rule
-    Get-NsxFirewallSection $NtpFirewallSectionName | New-NsxFirewallRule "NTP Provider to Consumer" -source $NTPSecurityGroupProvider -destination $NTPSecurityGroupConsumer -service $udp123 -action "allow" -AppliedTo $NTPSecurityGroupProvider,$NTPSecurityGroupConsumer
+    Get-NsxFirewallSection $NtpFirewallSectionName | New-NsxFirewallRule -name "NTP Provider to Consumer" -source $NTPSecurityGroupProvider -destination $NTPSecurityGroupConsumer -service $udp123 -action "allow" -AppliedTo $NTPSecurityGroupProvider,$NTPSecurityGroupConsumer | out-null
     #Consumer to Provider rule
-    Get-NsxFirewallSection $NtpFirewallSectionName | New-NsxFirewallRule "NTP Consumer to Provider" -source $NTPSecurityGroupConsumer -destination $NTPSecurityGroupProvider -service $udp123 -action "allow" -AppliedTo $NTPSecurityGroupProvider,$NTPSecurityGroupConsumer
+    Get-NsxFirewallSection $NtpFirewallSectionName | New-NsxFirewallRule -name "NTP Consumer to Provider" -source $NTPSecurityGroupConsumer -destination $NTPSecurityGroupProvider -service $udp123 -action "allow" -AppliedTo $NTPSecurityGroupProvider,$NTPSecurityGroupConsumer | out-null
     #SMTP
     #SMTP DFW Section
     New-NsxFirewallSection -name "$SmtpFirewallSectionName" | out-null
     #Provider to Consumer rule
-    Get-NsxFirewallSection $SmtpFirewallSectionName | New-NsxFirewallRule "SMTP Provider to Consumer" -source $SMTPSecurityGroupProvider -destination $SMTPSecurityGroupConsumer -service $SmtpServiceGroupName -action "allow" -AppliedTo $SMTPSecurityGroupProvider,$SMTPSecurityGroupConsumer
+    Get-NsxFirewallSection $SmtpFirewallSectionName | New-NsxFirewallRule -name "SMTP Provider to Consumer" -source $SMTPSecurityGroupProvider -destination $SMTPSecurityGroupConsumer -service $SmtpServiceGroup -action "allow" -AppliedTo $SMTPSecurityGroupProvider,$SMTPSecurityGroupConsumer | out-null
     #Consumer to Provider rule
-    Get-NsxFirewallSection $SmtpFirewallSectionName | New-NsxFirewallRule "SMTP Consumer to Provider" -source $SMTPSecurityGroupConsumer -destination $SMTPSecurityGroupProvider -service $SmtpServiceGroupName -action "allow" -AppliedTo $SMTPSecurityGroupProvider,$SMTPSecurityGroupConsumer
+    Get-NsxFirewallSection $SmtpFirewallSectionName | New-NsxFirewallRule -name "SMTP Consumer to Provider" -source $SMTPSecurityGroupConsumer -destination $SMTPSecurityGroupProvider -service $SmtpServiceGroup -action "allow" -AppliedTo $SMTPSecurityGroupProvider,$SMTPSecurityGroupConsumer | out-null
     # Active Directory
     #Active Directory DFW Section
     New-NsxFirewallSection -name "$ActiveDirectoryFirewallSectionName" | out-null
     #Provider to Consumer rule
-    Get-NsxFirewallSection $ActiveDirectoryFirewallSectionName | New-NsxFirewallRule -name "AD Provider to Consumer" -source $AdSecurityGroupProvider -destination $AdSecurityGroupConsumer -service $ActiveDirectoryServiceGroup -action "allow" -AppliedTo $AdSecurityGroupProvider,$AdSecurityGroupConsumer
+    Get-NsxFirewallSection $ActiveDirectoryFirewallSectionName | New-NsxFirewallRule -name "AD Provider to Consumer" -source $AdSecurityGroupProvider -destination $AdSecurityGroupConsumer -service $ActiveDirectoryServiceGroup -action "allow" -AppliedTo $AdSecurityGroupProvider,$AdSecurityGroupConsumer | out-null
     #Consumer to Provider rule
-    Get-NsxFirewallSection $ActiveDirectoryFirewallSectionName | New-NsxFirewallRule -name "AD Consumer to Provider" -source $AdSecurityGroupConsumer -destination $AdSecurityGroupProvider -service $ActiveDirectoryServiceGroup -action "allow" -AppliedTo $AdSecurityGroupProvider,$AdSecurityGroupConsumer
-    #vCenter
-    New-NsxFirewallSection -name "$vCenterFirewallSectionName" | out-null
+    Get-NsxFirewallSection $ActiveDirectoryFirewallSectionName | New-NsxFirewallRule -name "AD Consumer to Provider" -source $AdSecurityGroupConsumer -destination $AdSecurityGroupProvider -service $ActiveDirectoryServiceGroup -action "allow" -AppliedTo $AdSecurityGroupProvider,$AdSecurityGroupConsumer | out-null
+
+    #Internal Management - RDP
+    New-NsxFirewallSection -name "$RDPFirewallSectionName" | out-null
     #Provider to Consumer rule
-
+    Get-NsxFirewallSection $RDPFirewallSectionName | New-NsxFirewallRule -name "Management RDP Provider to Consumer" -source $InternalRDPSecurityGroupProvider -destination $InternalRDPSecurityGroupConsumer -service $tcp3389 -action "allow" -AppliedTo $InternalRDPSecurityGroupConsumer,$InternalRDPSecurityGroupProvider | out-null
     #Consumer to Provider rule
-    #vSphere
-    New-NsxFirewallSection -name "$vSphereFirewallSectionName" | out-null
+    Get-NsxFirewallSection $RDPFirewallSectionName | New-NsxFirewallRule -name "Management RDP Consumer to Provider" -source $InternalRDPSecurityGroupConsumer -destination $InternalRDPSecurityGroupProvider -service $tcp3389 -action "allow" -AppliedTo $InternalRDPSecurityGroupConsumer,$InternalRDPSecurityGroupProvider | out-null
+
+    #Internal Management - SSH
+    New-NsxFirewallSection -name "$SSHFirewallSectionName" | out-null
     #Provider to Consumer rule
-    #Get-NsxFirewallSection $vSphereFirewallSectionName | New-NsxFirewallRule -name "vSphere Host Provider to Consumer" -source $vSphereSecurityGroupApplic
+    Get-NsxFirewallSection $SSHFirewallSectionName | New-NsxFirewallRule -name "Management SSH Provider to Consumer" -source $InternalSSHSecurityGroupProvider -destination $InternalSSHSecurityGroupConsumer -service $tcp22 -action "allow" -AppliedTo $InternalSSHSecurityGroupConsumer,$InternalSSHSecurityGroupProvider | out-null
     #Consumer to Provider rule
-
-
-
-
+    Get-NsxFirewallSection $SSHFirewallSectionName | New-NsxFirewallRule -name "Management SSH Consumer to Provider" -source $InternalSSHSecurityGroupConsumer -destination $InternalSSHSecurityGroupProvider -service $tcp22 -action "allow" -AppliedTo $InternalSSHSecurityGroupConsumer,$InternalSSHSecurityGroupProvider | out-null
+    #Internal Management - WEB
+    New-NsxFirewallSection -name "$WEBFirewallSectionName" | out-null
+    #Provider to Consumer rule
+    Get-NsxFirewallSection $WEBFirewallSectionName | New-NsxFirewallRule -name "Management WEB Provider to Consumer" -source $InternalWEBSecurityGroupProvider -destination $InternalWEBSecurityGroupConsumer -service $ManagementServiceGroup -action "allow" -AppliedTo $InternalWEBSecurityGroupConsumer,$InternalWEBSecurityGroupProvider | out-null
+    #Consumer to Provider rule
+    Get-NsxFirewallSection $WEBFirewallSectionName | New-NsxFirewallRule -name "Management WEB Consumer to Provider" -source $InternalWEBSecurityGroupConsumer -destination $InternalWEBSecurityGroupProvider -service $ManagementServiceGroup -action "allow" -AppliedTo $InternalWEBSecurityGroupConsumer,$InternalWEBSecurityGroupProvider | out-null
 
 
 
