@@ -19,115 +19,104 @@
 
 param (
 
-    #protocol
-      $t = "tcp",
-      $u = "udp",
-    #services
-    ##web services
-      $http = "80",
-      $https = "443",
-    ##management services
-      $securesyslog = "1514",
-      $syslog = "514",
-      $ntp = "123",
-      $ssh = "22",
-      $dhcpserver = "67",
-      $dhcpclient = "68",
-    ##ad services
-      $kerberos = "88",
-      $ADGlobalCatalogSecure = "3269",
-      $ADGlobalCatalog = "3268",
-      $AD = "389",
-      $ADssl = "636",
-    ##Internet services
-      $dns = "53",
-    ##mail services
-      $smtp = "25",
-      $smtpsecure = "465",
-    ##database services
-      $mysql = "1433",
-      $cassandraclients = "9042",
-      $cassandrareplication = "7000",
-      $cassandrathiftclient = "9160",
-      $cassandrathriftservice1 = "16520-16580",
-      $cassandrathriftservice2 = "59778",
-    #vmware specific ports
-    ##log insight agents
-      $agent="9000",
-      $secureagent="9543",
+    ##################
     # Service Groups
-    ## Service Group Names
-      $WebManagementServiceGroupName = "SVG-Web-Management",
+      $LogInsightMasterServiceGroupName = "SVG-Log-Insight-Cluster-Master",
+      $ManagementServiceGroupName = "SVG-SDDC-Management",
       $LogInsightClusterServiceGroupName = "SVG-Log-Insight-Cluster",
-      $LogInsightClusterMasterServiceGroupName = "SVG-Log-Insight-Cluster-Master",
       $SyslogSourcesServiceGroupName = "SVG-Syslog",
       $ActiveDirectoryServiceGroupName = "SVG-Active-Directory",
       $LogInsightAgentServiceGroupName = "SVG-Log-Insight-Agents",
       $SmtpServiceGroupName = "SVG-SMTP",
       $DnsServiceGroupName = "SVG-DNS",
+      $DHCPServiceGroupName = "SVG-DHCP",
     ##################
     # Security Groups
-    ## Providers
-
+    #AD
       $AdSecurityGroupProviderName = "SG-Provider-ActiveDirectory",
-      $DnsSecurityGroupProviderName = "SG-Provider-DNS",
-      $SMTPSecurityGroupProviderName = "SG-Provider-SMTP",
-      $NTPSecurityGroupProviderName = "SG-Provider-NTP",
-      $SyslogSecurityGroupProviderName = "SG-Provider-Syslog",
-    # This could be linux and windows management.
-      $SshSecurityGroupProviderName = "SG-Provider-SSH",
-      $RdpSecurityGroupProviderName = "SG-Provider-RDP",
-      $LiAgentSecurityGroupProviderName = "SG-Provider-Log-Insight-Agents",
-      $WebManagementSecurityGroupProviderName = "SG-Provider-Web-Management",
-      $InternetSecurityGroupProviderName = "SG-Provider-Internet",
-      $ICMPSecurityGroupProviderName = "SG-Provider-ICMP",
-    ## Consumers
       $AdSecurityGroupConsumerName = "SG-Consumer-ActiveDirectory",
-      $DnsSecurityGroupConsumerName = "SG-Consumer-DNS",
-      $SMTPSecurityGroupConsumerName = "SG-Consumer-SMTP",
-      $NTPSecurityGroupConsumerName = "SG-Consumer-NTP",
-      $SyslogSecurityGroupConsumerName = "SG-Consumer-Syslog",
-      # This could be linux and windows management.
-      $SshSecurityGroupConsumerName = "SG-Consumer-SSH",
-      $RdpSecurityGroupConsumerName = "SG-Consumer-RDP",
-      $LiAgentSecurityGroupConsumerName = "SG-Consumer-Log-Insight-Agents",
-      $WebManagementSecurityGroupConsumerName = "SG-Consumer-Web-Management",
-      $InternetSecurityGroupConsumerName = "SG-Consumer-Internet",
-      $ICMPSecurityGroupConsumerName = "SG-Consumer-ICMP",
-
-    ## Application
-      $vCenterSecurityGroupApplicationName = "SG-vCenter-Appliances",
-      $LogInsightSecurityGroupApplicationName = "SG-LogInsight-Cluster",
-      $vSphereSecurityGroupApplicationName = "SG-vSphere-Hosts",
-      $NSXSecurityGroupApplicationName = "SG-NSX-Components",
-      $DNSSecurityGroupApplicationName = "SG-DNS-Servers",
       $ADSecurityGroupApplicationName = "SG-AD-Servers",
-      $NTPSecurityGroupApplicationName = "SG-NTP-Servers",
+    #DNS
+      $DnsSecurityGroupProviderName = "SG-Provider-DNS",
+      $DnsSecurityGroupConsumerName = "SG-Consumer-DNS",
+      $DNSSecurityGroupApplicationName = "SG-DNS-Servers",
+    #SMTP
+      $SMTPSecurityGroupProviderName = "SG-Provider-SMTP",
+      $SMTPSecurityGroupConsumerName = "SG-Consumer-SMTP",
       $SMTPSecurityGroupApplicationName = "SG-SMTP-Servers",
-
+    #NTP
+      $NTPSecurityGroupProviderName = "SG-Provider-NTP",
+      $NTPSecurityGroupConsumerName = "SG-Consumer-NTP",
+      $NTPSecurityGroupApplicationName = "SG-NTP-Servers",
+    #Syslog
+      $SyslogSecurityGroupProviderName = "SG-Provider-Syslog",
+      $SyslogSecurityGroupConsumerName = "SG-Consumer-Syslog",
+      $LogInsightSecurityGroupApplicationName = "SG-LogInsight-Cluster",
+    #DHCP
+      $DHCPSecurityGroupProviderName = "SG-Provider-DHCP",
+      $DHCPSecurityGroupConsumerName = "SG-Consumer-DHCP",
+      $DHCPSecurityGroupApplicationName = "SG-DHCP-Servers",
+    #vCenter
+      $vCenterSecuritygroupProviderName = "SG-Provider-vCenter",
+      $vCenterSecurityGroupConsumerName = "SG-Consumer-vCenter",
+      $vCenterSecurityGroupApplicationName = "SG-vCenter-Appliances",
+    #NSX
+      $NSXSecurityGroupProviderName = "SG-Provider-NSX",
+      $NSXSecurityGroupConsumerName = "SG-Consumer-NSX",
+      $NSXSecurityGroupApplicationName = "SG-NSX-Components",
+    #Odds and ends
+      $vSphereSecurityGroupApplicationName = "SG-vSphere-Hosts",
+      $WindowsCorporateSecurityGroupName = "SG-Windows-Corporate",
+      $LinuxCorporateSecurityGroupName = "SG-Linux-Corporate",
+    #Management
+      $SDDCSDDCManagementInternalSecurityGroupApplicationName = "SG-SDDC-Management-Internal",
+    #Management
+      $ManagementVPNSecurityGroupApplicationName = "SG-SDDC-Management-VPN",
+    #Internal Web
+      $InternalWebSecurityGroupProviderName = "SG-Provider-Internal-Web",
+      $InternalWebSecurityGroupConsumerName = "SG-Consumer-Internal-Web",
+    #Internal SSH
+      $InternalSSHSecurityGroupProviderName = "SG-Provider-Internal-SSH",
+      $InternalSSHSecurityGroupConsumerName = "SG-Consumer-Internal-SSH",
+    #Internal RDP
+      $InternalRDPSecurityGroupProviderName = "SG-Provider-Internal-RDP",
+      $InternalRDPSecurityGroupConsumerName = "SG-Consumer-Internal-RDP",
     ##################
     # Security Tags
-      $LogInsightSecurityTagName = "ST-LogInsight-Node",
-      $vCenterSecurityTagName = "ST-vCenter-Server",
-      $NSXSecurityTagName = "ST-NSX-Component",
-      $DnsSecurityTagName = "ST-DNS-Server",
-      $AdSecurityTagName = "ST-AD-Server",
-      $NTPSecurityTagName = "ST-NTP-Server",
-      $SMTPSecurityTagName = "ST-SMTP-Server",
+    ## Applications
+
+      $LogInsightSecurityTagName = "ST-Log-Insight-Cluster",
+      $vCenterSecurityTagName = "ST-vCenter-Servers",
+      $NSXSecurityTagName = "ST-NSX-Components",
+      $DnsSecurityTagName = "ST-DNS-Servers",
+      $AdSecurityTagName = "ST-AD-Servers",
+      $NTPSecurityTagName = "ST-NTP-Servers",
+      $SMTPSecurityTagName = "ST-SMTP-Servers",
+      $LinuxCorporateSecurityTagName = "ST-Linux-Corporate",
+      $WindowsCorporateSecurityTagName = "ST-Windows-Corporate",
+      $ManagementSecurityTagName = "ST-WebManagement",
+      $DHCPSecurityTagName = "ST-DHCP-Servers",
+      $ManagementInternalSecurityTagName = "ST-Management-Internal",
+
+
+
     ##############
     # Mandatory IP definitions
       $LogInsightLoadBalancerIPAddress = "192.168.100.95",
-      $NsxManagerIPAddress = "",
-      $NsxControllerIpAddress = "",
+      $NsxManagerIPAddress = "192.168.100.201",
+      $NsxControllerIpAddress1 = "192.168.100.202",
+      $NsxControllerIpAddress2 = "192.168.100.203",
+      $NsxControllerIpAddress3 = "192.168.100.204",
 
     ##################
+    # Miscellaneous
     # Firewall Rule Sections
       $LogInsightFirewallSectionName = "Log Insight Cluster",
       $ActiveDirectoryFirewallSectionName = "Active Directory Services",
       $DnsFirewallSectionName = "DNS Services",
       $NtpFirewallSectionName = "NTP Services",
       $SmtpFirewallSectionName = "SMTP Services",
-      $vCenterFirewallSectionName = "vCenter Services"
+      $vCenterFirewallSectionName = "vCenter Services",
 
 
     ##################
@@ -143,11 +132,54 @@ param (
     ##################
     # IP Sets
       $LogInsightIlbName = "IP-LogInsight-VIP",
+
+
+    ##################
+    # Services
+      #protocol
+        $t = "tcp",
+        $u = "udp",
+      #services
+      ##web services
+        $http = "80",
+        $https = "443",
+      ##management services
+        $securesyslog = "1514",
+        $syslog = "514",
+        $ntp = "123",
+        $ssh = "22",
+        $dhcpserver = "67",
+        $dhcpclient = "68",
+      ##ad services
+        $kerberos = "88",
+        $ADGlobalCatalogSecure = "3269",
+        $ADGlobalCatalog = "3268",
+        $AD = "389",
+        $ADssl = "636",
+      ##Internet services
+        $dns = "53",
+      ##mail services
+        $smtp = "25",
+        $smtpsecure = "465",
+      ##database services
+        $mysql = "1433",
+      ##clustering
+        $cassandraclients = "9042",
+        $cassandrareplication = "7000",
+        $cassandrathiftclient = "9160",
+        $cassandrathriftservice1 = "16520-16580",
+        $cassandrathriftservice2 = "59778",
+      #vmware specific ports
+      ##log insight agents
+        $agent="9000",
+        $secureagent="9543"
     )
 
+  write-host -foregroundcolor green "Paramters defined"
   ##################
   # SERVICES
   # Creating Web Services
+  write-host -foregroundcolor green "Creating Services"
   ##http
   $tcp80 = Get-NsxService "$t-$http"
    if (!$tcp80)
@@ -187,10 +219,10 @@ param (
     $tcp514 = (New-NsxService -name "$t-$Syslog" -protocol $t -port $Syslog -description "Syslog over TCP")
   }
   ##Secure Syslog TCP
-  $tcp1514 = Get-NsxService "$t-$Syslog"
+  $tcp1514 = Get-NsxService "$t-$securesyslog"
      if (!$tcp1514)
     {
-      $tcp1514 = (New-NsxService -name "$t-$Syslog" -protocol $t -port $Syslog -description "Secure Syslog over TCP")
+      $tcp1514 = (New-NsxService -name "$t-$securesyslog" -protocol $t -port $securesyslog -description "Secure Syslog over TCP")
     }
   ## NTP
   $udp123 = Get-NsxService "$u-$ntp"
@@ -316,45 +348,54 @@ param (
 
 # Creating Service Groups
 
+write-host -foregroundcolor green "Creating Service Groups"
+
 ## Web management
-  $WebManagementServiceGroup = New-NsxServiceGroup $WebManagementServiceGroupName -description "Web Services"
-  $WebManagementServiceGroup | New-NsxServiceGroupMember -member $tcp80,$tcp443
+  $ManagementServiceGroup = Get-NsxServicegroup "$ManagementServiceGroupName"
+    if (!$ManagementServiceGroup)
+    {
+      $ManagementServiceGroup = New-NsxServiceGroup $ManagementServiceGroupName -description "Web and SSH Management services"
+      $ManagementServiceGroup |  -member $tcp80,$tcp443
+    }
+    # Add SSH to the group
+  $ManagementServiceGroup | Add-NsxServiceGroupMember -member $tcp22
+
 
 ## Active Directory
   $ActiveDirectoryServiceGroup = New-NsxServiceGroup $ActiveDirectoryServiceGroupName -description "Active Directory services"
-  $ActiveDirectoryServiceGroup | New-NsxServiceGroupMember -member $tcp389,$udp389,$tcp88,$udp88,$tcp3268,$tcp3269
+  $ActiveDirectoryServiceGroup | Add-NsxServiceGroupMember -member $tcp389,$udp389,$tcp88,$udp88,$tcp3268,$tcp3269
 
 ## SMTP
 
-  $SmtpServiceGroupName = New-NsxServiceGroup $SmtpServicegroupName -description "SMTP Services"
-  $SmtpServiceGroupName | New-NsxServiceGroupMember -member $tcp25,$tcp465
+  $SmtpServiceGroup = New-NsxServiceGroup $SmtpServicegroupName -description "SMTP Services"
+  $SmtpServiceGroup | Add-NsxServiceGroupMember -member $tcp25,$tcp465
 
 ## DNS
 
   $DnsServiceGroup = New-NsxServiceGroup $DnsServiceGroupName -description "DNS tcp and udp"
-  $DnsServiceGroup | New-NsxServiceGroupMember -member $udp53,$tcp53
+  $DnsServiceGroup | Add-NsxServiceGroupMember -member $udp53,$tcp53
 
-## NTP
+## Syslog
+  $SyslogServiceGroup = New-NsxServiceGroup $SyslogSourcesServiceGroupName -description "Syslog tcp/udp and Secure Syslog"
+  $SyslogServiceGroup | Add-NsxServiceGroupMember -member $udp514,$tcp514,$tcp1514
 
-  # Single Service. No service group needs to be made.
+
+##DHCP
+
+  $DHCPServiceGroup = New-NsxServiceGroup $DHCPServiceGroupName -description "DHCP ports"
+  $DHCPServiceGroup | Add-NsxServiceGroupMember -member $udp68,$udp67
 
 
 ## Log Insight specfic
   ## Log Insight Cluster group
   $LogInsightClusterServiceGroup = New-NsxServiceGroup $LogInsightClusterServiceGroupName -description "Cluster replication ports"
-  $LogInsightClusterServiceGroup | New-NsxServiceGroupMember -member $tcp7000,$tcp9042,$tcp9160,$tcp59778,$tcp16520range
-  ## Log Insight master cluster group
-  $LogInsightClusterMasterServiceGroup = New-NsxServiceGroup $LogInsightClusterMasterServiceGroupName
-  $LogInsightClusterMasterServiceGroup | New-NsxServiceGroupMember -member $WebManagementServiceGroup, $LogInsightClusterServicegroup, $ActiveDirectoryServiceGroup, $DnsServiceGroup
+  $LogInsightClusterServiceGroup | Add-NsxServiceGroupMember -member $tcp7000,$tcp9042,$tcp9160,$tcp59778,$tcp16520range
+
+  $LogInsightMasterServiceGroup = New-NsxServiceGroup $LogInsightMasterServiceGroupName -description "All services replicated through Log Insight cluster"
+  $LogInsightMasterServiceGroup | Add-NsxServiceGroupMember -member $LogInsightClusterServiceGroup,$SyslogServicegroup,$DnsServiceGroup,$SmtpServiceGroup,$ManagementServiceGroup,$ActiveDirectoryServiceGroup
 
 
-
-
-#MySQL
-
-
-#DHCP
-
+write-host -foregroundcolor green "Creating Security Tags"
 ##################
 # SECURITY TAGS
 # Creating Security Tags
@@ -366,70 +407,157 @@ param (
   $AdSecurityTag = New-NsxSecurityTag -name "$AdSecurityTagName"
   $NTPSecurityTag = New-NsxSecurityTag -name "$NTPSecurityTagName"
   $SMTPSecurityTag = New-NsxSecurityTag -name "$SMTPSecurityTagName"
+  $ManagementSecurityTag = New-NsxSecurityTag -name "$ManagementSecurityTagName"
+  $WindowsCorporateSecurityTag = New-NsxSecurityTag -name "$WindowsCorporateSecurityTagName"
+  $LinuxCorporateSecurityTag = New-NsxSecurityTag -name "$LinuxCorporateSecurityTagName"
+  $DHCPSecurityTag = New-NsxSecurityTag -name "$DHCPSecurityTagName"
+
 
 
 ##################
 # CREATING SECURITY GROUPS
+
+write-host -foregroundcolor green "Creating  Application SGs"
+# Applications Groups
+
+  #LogInsight
+  $LogInsightSecurityGroupApplication = New-NsxSecurityGroup -name "$LogInsightSecurityGroupApplicationName" -description "Log Insight Cluster Security Group" -includemember $LogInsightSecurityTag
+  #vCenter
+  $vCenterSecurityGroupApplication = New-NsxSecurityGroup -name "$vCenterSecurityGroupApplicationName" -description "vCenter Server Security Group" -includemember $vCenterSecurityTag
+  #vSphere
+  $vSphereSecurityGroupApplication = New-NsxSecurityGroup -name "$vSphereSecurityGroupApplicationName" -description "vSphere Hosts Security Group"
+  #NSX
+  $NSXSecurityGroupApplication = New-NsxSecurityGroup -name "$NSXSecurityGroupApplicationName" -description "NSX Manager and Controllers Security group" -includemember $NSXSecurityTag
+  #DNS
+  $DNSSecurityGroupApplication = New-NsxSecurityGroup -name "$DNSSecurityGroupApplicationName" -description "DNS Server Security Group" -includemember $DnsSecurityTag
+  #Active Directory
+  $ADSecurityGroupApplication = New-NsxSecurityGroup -name "$ADSecurityGroupApplicationName" -description "Active Directory Server Security Group" -includemember $AdSecurityTag
+  #NTP
+  $NTPSecurityGroupApplication = New-NsxSecurityGroup -name "$NTPSecurityGroupApplicationName" -description "NTP Server Security Group" -includemember $NTPSecurityTag
+  #SMTP
+  $SMTPSecurityGroupApplication = New-NsxSecurityGroup -name "$SMTPSecurityGroupApplicationName" -description "SMTP Server Security Group" -includemember $SMTPSecurityTag
+  #DHCP
+  $DHCPSecurityGroupApplication = New-NsxSecurityGroup -name "$DHCPSecurityGroupApplicationName" -description "DHCP Server Security Group" -includemember $DHCPSecurityTag
+  #Management
+  $SDDCManagementInternalSecurityGroupApplication = New-NsxSecurityGroup -name "$SDDCSDDCManagementInternalSecurityGroupApplicationName" -description "Management Host Security Group" -includemember $ManagementSecurityTag
+
+write-host -foregroundcolor green "Creating OS SGs"
+
+# OS Flavor groups
+
+  $WindowsCorporateSecurityGroup = New-NsxSecurityGroup -name "$WindowsCorporateSecurityGroupName" -description "Windows OS Corporate Security Group" -includemember $WindowsCorporateSecurityTag,$ADSecurityGroupApplication,$DNSSecurityGroupApplication,$NTPSecurityGroupApplication,$SMTPSecurityGroupApplication,$DHCPSecurityGroupApplication,$SDDCManagementInternalSecurityGroupApplication
+
+  $LinuxCorporateSecurityGroup = New-NsxSecurityGroup -name "$LinuxCorporateSecurityGroupName" -description "Linux OS Corporate Security Group" -includemember $LogInsightSecurityTag,$LogInsightSecurityGroupApplication,$SDDCManagementInternalSecurityGroupApplication,$vSphereSecurityGroupApplication
+
 # Providers
 
 
-  $AdSecurityGroupProvider = New-NsxSecurityGroup -name "$AdSecurityGroupProviderName" -description "Active Directory Provider Security Group"
-  $DnsSecurityGroupProvider = New-NsxSecurityGroup -name "$DnsSecurityGroupProviderName" -description "DNS Provider Security Group"
-  $SMTPSecurityGroupProvider = New-NsxSecurityGroup -name "$SMTPSecurityGroupProviderName" -description "SMTP Provider Security Group"
-  $SyslogSecurityGroupProvider = New-NsxSecurityGroup -name "$DnsSecurityGroupProviderName" -description "Syslog Provider Security Group"
-  $NTPSecurityGroupProvider = New-NsxSecurityGroup -name "$NTPSecurityGroupProviderName" -description "NTP Provider Security Group"
-  $SSHSecurityGroupProvider = New-NsxSecurityGroup -name "$SSHSecurityGroupProviderName" -description "SSH Provider Security Group"
-  $RdpSecurityGroupProvider = New-NsxSecurityGroup -name "$RdpSecurityGroupProviderName" -description "Rdp Provider Security Group"
-  $LiAgentSecurityGroupProvider = New-NsxSecurityGroup -name "$LiAgentSecurityGroupProviderName" -description "LiAgent Provider Security Group"
-  $WebManagementSecurityGroupProvider = New-NsxSecurityGroup -name "$WebManagementSecurityGroupProviderName" -description "WebManagement Provider Security Group"
-  $InternetSecurityGroupProvider = New-NsxSecurityGroup -name "$InternetSecurityGroupProviderName" -description "Internet Provider Security Group"
-  $ICMPSecurityGroupProvider = New-NsxSecurityGroup -name "$ICMPSecurityGroupProviderName" -description "ICMP Provider Security Group"
+  $AdSecurityGroupProvider = New-NsxSecurityGroup -name "$AdSecurityGroupProviderName" -description "Active Directory Provider Security Group" -includemember $ADSecurityGroupApplication
+  $DnsSecurityGroupProvider = New-NsxSecurityGroup -name "$DnsSecurityGroupProviderName" -description "DNS Provider Security Group" -includemember $DNSSecurityGroupApplication
+  $SMTPSecurityGroupProvider = New-NsxSecurityGroup -name "$SMTPSecurityGroupProviderName" -description "SMTP Provider Security Group" -includemember $SMTPSecurityGroupApplication
+  $SyslogSecurityGroupProvider = New-NsxSecurityGroup -name "$SyslogSecurityGroupProviderName" -description "Syslog Provider Security Group" -includemember $LogInsightSecurityGroupApplication
+  $NTPSecurityGroupProvider = New-NsxSecurityGroup -name "$NTPSecurityGroupProviderName" -description "NTP Provider Security Group" -includemember $NTPSecurityGroupApplication
+  $ManagementInternalSecurityGroupProvider = New-NsxSecurityGroup -name "$ManagementInternalSecurityGroupProviderName" -description "Management Provider Security Group"
 
+
+write-host -foregroundcolor green "Creating Consumer SGs"
 
 # Consumers
 
-  $AdSecurityGroupConsumer = New-NsxSecurityGroup -name "$AdSecurityGroupConsumerName" -description "Active Directory Consumer Security Group"
-  $DnsSecurityGroupConsumer = New-NsxSecurityGroup -name "$DnsSecurityGroupConsumerName" -description "DNS Consumer Security Group"
-  $SMTPSecurityGroupConsumer = New-NsxSecurityGroup -name "$SMTPSecurityGroupConsumerName" -description "SMTP Consumer Security Group"
-  $SyslogSecurityGroupConsumer = New-NsxSecurityGroup -name "$DnsSecurityGroupConsumerName" -description "Syslog Consumer Security Group"
-  $NTPSecurityGroupConsumer = New-NsxSecurityGroup -name "$NTPSecurityGroupConsumerName" -description "NTP Consumer Security Group"
-  $SSHSecurityGroupConsumer = New-NsxSecurityGroup -name "$SSHSecurityGroupConsumerName" -description "SSH Consumer Security Group"
-  $RdpSecurityGroupConsumer = New-NsxSecurityGroup -name "$RdpSecurityGroupConsumerName" -description "Rdp Consumer Security Group"
-  $LiAgentSecurityGroupConsumer = New-NsxSecurityGroup -name "$LiAgentSecurityGroupConsumerName" -description "LiAgent Consumer Security Group"
-  $WebManagementSecurityGroupConsumer = New-NsxSecurityGroup -name "$WebManagementSecurityGroupConsumerName" -description "WebManagement Consumer Security Group"
-  $InternetSecurityGroupConsumer = New-NsxSecurityGroup -name "$InternetSecurityGroupConsumerName" -description "Internet Consumer Security Group"
-  $ICMPSecurityGroupConsumer = New-NsxSecurityGroup -name "$ICMPSecurityGroupConsumerName" -description "ICMP Consumer Security Group"
+  $AdSecurityGroupConsumer = New-NsxSecurityGroup -name "$AdSecurityGroupConsumerName" -description "Active Directory Consumer Security Group" -includemember $LogInsightSecurityGroupApplication
+  $DnsSecurityGroupConsumer = New-NsxSecurityGroup -name "$DnsSecurityGroupConsumerName" -description "DNS Consumer Security Group" -includemember $LogInsightSecurityGroupApplication
+  $SMTPSecurityGroupConsumer = New-NsxSecurityGroup -name "$SMTPSecurityGroupConsumerName" -description "SMTP Consumer Security Group" -includemember $LogInsightSecurityGroupApplication
+  $SyslogSecurityGroupConsumer = New-NsxSecurityGroup -name "$SyslogSecurityGroupConsumerName" -description "Syslog Consumer Security Group"
+  $NTPSecurityGroupConsumer = New-NsxSecurityGroup -name "$NTPSecurityGroupConsumerName" -description "NTP Consumer Security Group" -includemember $LogInsightSecurityGroupApplication
+  $ManagementInternalSecurityGroupConsumer = New-NsxSecurityGroup -name "$ManagementInternalSecurityGroupConsumerName" -description "Management Consumer Security Group" -includemember $LogInsightSecurityGroupApplication,$SDDCManagementInternalSecurityGroupApplication
 
-# Applications
-## Log Insight
-
-  $LogInsightSecurityGroupApplication = New-NsxSecurityGroup -name "$LogInsightSecurityGroupApplicationName" -description "Log Insight Cluster Security Group" -includemember $LogInsightSecurityTag
-  $vCenterSecurityGroupApplication = New-NsxSecurityGroup -name "$LogInsightSecurityGroupApplicationName" -description "vCenter Security Group" -includemember $vCenterSecurityTag
-  $vSphereSecurityGroupApplication = New-NsxSecurityGroup -name "$vSphereSecurityGroupApplicationName" -description "vSphere Security Group"
-  $NSXSecurityGroupApplication = New-NsxSecurityGroup -name "$NSXSecurityGroupApplicationName" -description "NSX Manager and Controllers Security group" -includemember $NSXSecurityTag
-  $DNSSecurityGroupApplication = New-NsxSecurityGroup -name "$DNSSecurityGroupApplicationName" -description "DNS Server Security Group" -includemember $DnsSecurityTag
-  $ADSecurityGroupApplication = New-NsxSecurityGroup -name "$ADSecurityGroupApplicationName" -description "Active Directory Server Security Group" -includemember $AdSecurityTag
-  $NTPSecurityGroupApplication = New-NsxSecurityGroup -name "$NTPSecurityGroupApplicationName" -description "NTP Server Security Group" -includemember $NTPSecurityTag
-  $SMTPSecurityGroupApplication = New-NsxSecurityGroup -name "$SMTPSecurityGroupApplicationName" -description "SMTP Server Security Group" -includemember $SMTPSecurityTag
-
+write-host -foregroundcolor green "Creating Firewall Rules"
 
 ##################
-# FIREWALL SECTIONS
-# Creating Sections
-
-  $LogInsightFirewallSection = New-NsxFirewallSection -name "$LogInsightFirewallSectionName"
-  $ActiveDirectoryFirewallSection =  New-NsxFirewallSection -name "$ActiveDirectoryFirewallSectionName"
-  $DnsFirewallSection =  New-NsxFirewallSection -name "$DnsFirewallSectionName"
-  $NtpFirewallSection =  New-NsxFirewallSection -name "$NtpFirewallSectionName"
-  $SmtpFirewallSection =  New-NsxFirewallSection -name "$SmtpFirewallSectionName"
-  $vCenterFirewallSection =  New-NsxFirewallSection -name "$vCenterFirewallSectionName"
-
-##################
-# FIREWALL RULES
+# FIREWALL RULES AND SECTIONS
 
 
-# DNS Servers
+    #DNS Rule and Section
+    #DNS DFW Section
+    New-NsxFirewallSection -name "$DnsFirewallSectionName" | out-null
+    #Provider to Consumer rule
+    Get-NsxFirewallSection $DnsFirewallSectionName | New-NsxFirewallRule -name "DNS Provider to Consumer" -source $DnsSecurityGroupProvider -destination $DnsSecurityGroupConsumer -service $DnsServiceGroup -Action "allow" -AppliedTo $DnsSecurityGroupProvider,$DnsSecurityGroupConsumer | out-null
+    #Consumer to Provider rule
+    Get-NsxFirewalLSection $DnsFirewallSectionName | New-NsxFirewallRule -name "DNS Consumer to Provider" -source $DnsSecurityGroupConsumer -destination $DnsSecurityGroupProvider -service $DnsServiceGroup -Action "allow" -AppliedTo $DnsSecurityGroupProvider,$DnsSecurityGroupConsumer | out-null
 
-  $DnsFirewallSection | New-NsxFirewallRule -name "DNS Provider to Consumer" -source $DnsSecurityGroupProvider -destination $DnsSecurityGroupConsumer -service $DnsServiceGroup -Action "allow" -AppliedTo $DnsSecurityGroupProvider,$DnsSecurityGroupConsumer
+    #Syslog
+    #Syslog DFW Section
+    New-NsxFirewallSection -name "$LogInsightFirewallSectionName" | out-null
+    #Provider to Consumer rule
+    Get-NsxFirewalLSection $LogInsightFirewallSectionName  | New-NsxFirewallRule -name "Syslog Provider to Consumer" -source $SyslogSecurityGroupProvider -destination $SyslogSecurityGroupConsumer -service $SyslogServiceGroup -Action "allow" -AppliedTo $SyslogSecurityGroupConsumer,$SyslogSecurityGroupProvider | out-null
+    #Consumer to Provider rule
+    Get-NsxFirewalLSection $LogInsightFirewallSectionName  | New-NsxFirewallRule -name "Syslog Consumer to Provider" -source $SyslogSecurityGroupConsumer -destination $SyslogSecurityGroupProvider -service $SyslogServicegroup -Action "allow" -AppliedTo $SyslogSecurityGroupConsumer,$SyslogSecurityGroupProvider | out-null
+    #Intra-Cluster communication
+    Get-NsxFirewalLSection $LogInsightFirewallSectionName  | New-NsxFirewallRule -name "Log Insight Node" -source $LogInsightSecurityGroupApplication -destination $LogInsightSecurityGroupApplication -service $LogInsightMasterServiceGroup -Action "allow" -AppliedTo $LogInsightSecurityGroupApplication | out-null
 
-  $DnsFirewallSection | New-NsxFirewallRule -name "DNS Consumer to Provider" -source $DnsSecurityGroupConsumer -destination $DnsSecurityGroupProvider -service $DnsServiceGroup -Action "allow" -AppliedTo $DnsSecurityGroupProvider,$DnsSecurityGroupConsumer
+
+    #NTP
+    #NTP DFW Section
+    New-NsxFirewallSection -name "$NtpFirewallSectionName" | out-null
+    #Provider to Consumer rule
+    Get-NsxFirewallSection $NtpFirewallSectionName | New-NsxFirewallRule "NTP Provider to Consumer" -source $NTPSecurityGroupProvider -destination $NTPSecurityGroupConsumer -service $udp123 -action "allow" -AppliedTo $NTPSecurityGroupProvider,$NTPSecurityGroupConsumer
+    #Consumer to Provider rule
+    Get-NsxFirewallSection $NtpFirewallSectionName | New-NsxFirewallRule "NTP Consumer to Provider" -source $NTPSecurityGroupConsumer -destination $NTPSecurityGroupProvider -service $udp123 -action "allow" -AppliedTo $NTPSecurityGroupProvider,$NTPSecurityGroupConsumer
+    #SMTP
+    #SMTP DFW Section
+    New-NsxFirewallSection -name "$SmtpFirewallSectionName" | out-null
+    #Provider to Consumer rule
+    Get-NsxFirewallSection $SmtpFirewallSectionName | New-NsxFirewallRule "SMTP Provider to Consumer" -source $SMTPSecurityGroupProvider -destination $SMTPSecurityGroupConsumer -service $SmtpServiceGroupName -action "allow" -AppliedTo $SMTPSecurityGroupProvider,$SMTPSecurityGroupConsumer
+    #Consumer to Provider rule
+    Get-NsxFirewallSection $SmtpFirewallSectionName | New-NsxFirewallRule "SMTP Consumer to Provider" -source $SMTPSecurityGroupConsumer -destination $SMTPSecurityGroupProvider -service $SmtpServiceGroupName -action "allow" -AppliedTo $SMTPSecurityGroupProvider,$SMTPSecurityGroupConsumer
+    # Active Directory
+    #Active Directory DFW Section
+    New-NsxFirewallSection -name "$ActiveDirectoryFirewallSectionName" | out-null
+    #Provider to Consumer rule
+    Get-NsxFirewallSection $ActiveDirectoryFirewallSectionName | New-NsxFirewallRule -name "AD Provider to Consumer" -source $AdSecurityGroupProvider -destination $AdSecurityGroupConsumer -service $ActiveDirectoryServiceGroup -action "allow" -AppliedTo $AdSecurityGroupProvider,$AdSecurityGroupConsumer
+    #Consumer to Provider rule
+    Get-NsxFirewallSection $ActiveDirectoryFirewallSectionName | New-NsxFirewallRule -name "AD Consumer to Provider" -source $AdSecurityGroupConsumer -destination $AdSecurityGroupProvider -service $ActiveDirectoryServiceGroup -action "allow" -AppliedTo $AdSecurityGroupProvider,$AdSecurityGroupConsumer
+    #vCenter
+    New-NsxFirewallSection -name "$vCenterFirewallSectionName" | out-null
+    #Provider to Consumer rule
+
+    #Consumer to Provider rule
+    #vSphere
+    New-NsxFirewallSection -name "$vSphereFirewallSectionName" | out-null
+    #Provider to Consumer rule
+    #Get-NsxFirewallSection $vSphereFirewallSectionName | New-NsxFirewallRule -name "vSphere Host Provider to Consumer" -source $vSphereSecurityGroupApplic
+    #Consumer to Provider rule
+
+
+
+
+
+
+
+
+# Some validation tests.
+
+
+#TestFixture "Confirm Objects" {
+#      $Securitygroups = @($AdSecurityGroupProviderName,$AdSecurityGroupConsumerName,$ADSecurityGroupApplicationName,$DnsSecurityGroupProviderName,$DnsSecurityGroupConsumerName,$DNSSecurityGroupApplicationName,$SMTPSecurityGroupProviderName,$SMTPSecurityGroupConsumerName,$SMTPSecurityGroupApplicationName,$NTPSecurityGroupProviderNam,$NTPSecurityGroupConsumerName,$NTPSecurityGroupApplicationName,$SyslogSecurityGroupProviderName,$SyslogSecurityGroupConsumerName,$LogInsightSecurityGroupApplicationName ,$DHCPSecurityGroupProviderName,$DHCPSecurityGroupConsumerName,$DHCPSecurityGroupApplicationName,$vCenterSecuritygroupProviderName,$vCenterSecurityGroupConsumerName,$vCenterSecurityGroupApplicationName,$NSXSecurityGroupProviderName,$NSXSecurityGroupConsumerName,$NSXSecurityGroupApplicationName,$vSphereSecurityGroupApplicationName,$WindowsCorporateSecurityGroupName,$LinuxCorporateSecurityGroupName,$ManagementInternalSecurityGroupProviderName,$ManagementInternalSecurityGroupConsumerName,$SDDCSDDCManagementInternalSecurityGroupApplicationName)
+#
+#      foreach ($group in $SecurityGroups){
+#        TestCase "$group reported back from query" {
+#          $results = Get-NsxSecurityGroup $group
+#          $results.name | Should be $group
+#        }
+#      }
+#
+#}
+#
+#
+
+write-host -foregroundcolor green "
+
+SDDC lockdown complete
+
+The TO-DO list:
+* Append Virtual Machines to Security Groups
+* Append IP Sets for LB VIPs, hardware endpoints, or objects outside NSX domain
+* Monitor traffic with DFW tags and LogInsight
+* Apply deny all"
